@@ -8,6 +8,9 @@
 #include <kstd/string.h>
 #include <kstd/stdio.h>
 #include <kstd/asm.h>
+#include <syncos/irq.h>
+#include <syncos/timer.h>
+#include <syncos/pic.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
@@ -56,6 +59,10 @@ static void hw_init(void) {
     
     // Initialize the Interrupt Descriptor Table
     idt_init();
+    pic_init(0x20, 0x28); // Remap PIC IRQs to vectors 0x20-0x2F
+    irq_init();           // Initialize IRQ system
+    timer_init(1000);     // Initialize timer with 1000Hz frequency (1ms resolution)
+    idt_enable_interrupts();
     
     printf("Hardware initialization complete\n");
 }

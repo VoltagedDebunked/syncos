@@ -28,7 +28,7 @@ $(call USER_VARIABLE,AR,ar)
 $(call USER_VARIABLE,LD,ld)
 
 # User controllable C flags.
-$(call USER_VARIABLE,CFLAGS,-g -O2 -pipe)
+$(call USER_VARIABLE,CFLAGS,-g -O2 -pipe -w)
 
 # User controllable C preprocessor flags. We set none by default.
 $(call USER_VARIABLE,CPPFLAGS,)
