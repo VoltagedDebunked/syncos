@@ -1,0 +1,8 @@
+/kernel-deps
+/limine
+/ovmf
+*.iso
+*.hdd
+
+/.vscode/
+/.idea/
