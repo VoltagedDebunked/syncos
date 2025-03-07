@@ -6,11 +6,12 @@
 #include <syncos/timer.h>
 #include <syncos/keyboard.h>
 #include <syncos/mouse.h>
+#include <syncos/pmm.h>
+#include <syncos/vmm.h>  // Include the VMM header
 #include <kstd/stdio.h>
 #include <kstd/string.h>
 #include <syncos/serial.h>
 #include <kstd/asm.h>
-#include <syncos/pmm.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
@@ -52,9 +53,37 @@ void kmain(void) {
     // Enable interrupts
     idt_enable_interrupts();
 
-    pmm_init(memmap_request.response, 0);
+    // Initialize PMM
+    if (memmap_request.response) {
+        pmm_init(memmap_request.response, 0);
+        
+        // Initialize VMM after PMM
+        vmm_init();
+    } else {
+        printf("ERROR: No memory map response from bootloader\n");
+    }
+
+    // Test the VMM with proper error handling - add this after your other initialization
+printf("Testing VMM...\n");
+void* test_mem = NULL;
+if ((test_mem = vmm_allocate(4096, VMM_FLAG_PRESENT | VMM_FLAG_WRITABLE)) != NULL) {
+    printf("VMM test: Successfully allocated memory at 0x%lx\n", (uintptr_t)test_mem);
+    // Don't use strcpy yet - just write a simple value
+    *((uint32_t*)test_mem) = 0x12345678;
+    printf("VMM test: Successfully wrote to allocated memory\n");
     
-    printf("\nSystem initialized.");
+    // Read the value back
+    uint32_t read_val = *((uint32_t*)test_mem);
+    printf("VMM test: Read value: 0x%x\n", read_val);
+    
+    // Free the memory
+    vmm_free(test_mem, 4096);
+    printf("VMM test: Memory freed\n");
+} else {
+    printf("VMM test: Could not allocate memory\n");
+}
+    
+    printf("\nSystem initialization complete.\n");
     
     // Hang forever
     while (1) {

@@ -257,8 +257,6 @@ void timer_busy_wait_us(uint32_t microseconds) {
     uint64_t start, current;
     uint64_t tsc_per_us;
     
-    // Rough approximation of TSC frequency - in a real kernel we'd calibrate this
-    // We're targeting a 64-bit x86 CPU with an expected frequency between 1-4 GHz
     tsc_per_us = 2000; // Assuming ~2GHz CPU
     
     // Read starting timestamp
