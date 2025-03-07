@@ -68,3 +68,37 @@ int memcmp(const void *s1, const void *s2, size_t n) {
     // Memory areas are identical
     return 0;
 }
+
+// Copy string from source to destination
+char *strcpy(char *dest, const char *src) {
+    char *original_dest = dest;
+    
+    // Copy characters until null terminator
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    
+    // Add null terminator
+    *dest = '\0';
+    
+    return original_dest;
+}
+
+// Copy at most n characters from src to dest
+char *strncpy(char *dest, const char *src, size_t n) {
+    size_t i;
+    
+    // Copy characters up to n or null terminator
+    for (i = 0; i < n && src[i] != '\0'; i++) {
+        dest[i] = src[i];
+    }
+    
+    // If we haven't filled n characters, pad with null terminators
+    for (; i < n; i++) {
+        dest[i] = '\0';
+    }
+    
+    return dest;
+}
