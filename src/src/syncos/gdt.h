@@ -59,9 +59,17 @@ typedef struct __attribute__((packed)) {
     uint16_t iomap_base;     // Base address of I/O permissions bitmap
 } tss_t;
 
-// Public function prototypes
+// Basic GDT functions
 void gdt_init(void);
 void gdt_set_kernel_stack(uint64_t stack);
 uint64_t gdt_get_kernel_stack(void);
 
-#endif // _SYNCOS_GDT_H
+// Enhanced GDT functions for fault tolerance
+void gdt_flush(void);        // Load the GDT into the CPU
+void gdt_reload(void);       // Reload GDT and all segment registers
+bool gdt_recover(void);      // Attempt to recover corrupted GDT
+void gdt_verify(uint64_t tick_count, void *context); // Verify GDT integrity periodically
+void gdt_register_verification(void); // Register GDT verification with timer system
+void gdt_dump(void);         // Dump GDT info
+
+#endif
