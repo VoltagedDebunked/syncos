@@ -10,6 +10,7 @@
 #include <kstd/string.h>
 #include <syncos/serial.h>
 #include <kstd/asm.h>
+#include <syncos/pmm.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
@@ -50,6 +51,8 @@ void kmain(void) {
     
     // Enable interrupts
     idt_enable_interrupts();
+
+    pmm_init(memmap_request.response, 0);
     
     printf("\nSystem initialized.");
     

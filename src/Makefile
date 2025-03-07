@@ -51,8 +51,6 @@ override CC_IS_CLANG := $(shell ! $(CC) --version 2>/dev/null | grep 'clang' >/d
 
 # Internal C flags that should not be changed by the user.
 override CFLAGS += \
-    -Wall \
-    -Wextra \
     -std=gnu11 \
     -nostdinc \
     -ffreestanding \
@@ -65,7 +63,7 @@ override CFLAGS += \
 
 # Internal C preprocessor flags that should not be changed by the user.
 override CPPFLAGS := \
-    -I src \
+    -I src/ \
     -isystem freestnd-c-hdrs-0bsd \
     $(CPPFLAGS) \
     -MMD \

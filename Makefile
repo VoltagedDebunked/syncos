@@ -6,7 +6,7 @@ MAKEFLAGS += -rR
 override USER_VARIABLE = $(if $(filter $(origin $(1)),default undefined),$(eval override $(1) := $(2)))
 
 # Default user QEMU flags. These are appended to the QEMU command calls.
-$(call USER_VARIABLE,QEMUFLAGS,-m 2G)
+$(call USER_VARIABLE,QEMUFLAGS,-m 2G -serial stdio)
 
 override IMAGE_NAME := SyncOS-x86_64
 
