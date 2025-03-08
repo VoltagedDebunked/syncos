@@ -15,6 +15,7 @@
 #include <kstd/string.h>
 #include <syncos/serial.h>
 #include <kstd/asm.h>
+#include <syncos/fs/ext4.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
@@ -112,11 +113,11 @@ void kmain(void) {
         printf("The system will run without persistent storage capability.\n");
     }
 
+    ext4_init();
+
     printf("\n==============================================\n");
     printf("       SyncOS - Finished Initialization       \n");
     printf("==============================================\n\n");
-
-    test_storage_devices();
     
     // Hang forever
     while (1) {
