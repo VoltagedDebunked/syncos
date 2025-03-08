@@ -615,7 +615,6 @@ static bool find_inode_by_path(ext4_fs_t* fs, const char* path, uint32_t* inode_
                 return false;
             }
             
-            // For simplicity, we only handle leaf nodes here
             if (header->eh_depth == 0 && header->eh_entries > 0) {
                 ext4_extent_t* extents = (ext4_extent_t*)((uint8_t*)header + sizeof(ext4_extent_header_t));
                 

@@ -16,6 +16,7 @@
 #include <syncos/serial.h>
 #include <kstd/asm.h>
 #include <syncos/fs/ext4.h>
+#include <syncos/elf.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
