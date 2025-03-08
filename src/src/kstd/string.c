@@ -102,3 +102,11 @@ char *strncpy(char *dest, const char *src, size_t n) {
     
     return dest;
 }
+
+size_t strlen(const char *str) {
+    const char *s = str;
+    while (*s) {
+        s++;
+    }
+    return s - str;
+}

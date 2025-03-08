@@ -13,5 +13,6 @@ int memcmp(const void *s1, const void *s2, size_t n);
 // String functions
 char *strcpy(char *dest, const char *src);
 char *strncpy(char *dest, const char *src, size_t n);
+size_t strlen(const char *str);
 
 #endif // SYNCOS_KSTD_STRING_H

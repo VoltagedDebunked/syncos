@@ -33,6 +33,16 @@ run-x86_64: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 		-device nvme-ns,drive=nvmedisk0,nsid=1 \
 		$(QEMUFLAGS)
 
+run-sata: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
+	qemu-system-x86_64 \
+		-M q35 \
+		-drive if=pflash,unit=0,format=raw,file=ovmf/ovmf-code-x86_64.fd,readonly=on \
+		-cdrom $(IMAGE_NAME).iso \
+	    -drive file=img/sata.qcow2,if=none,id=sata_disk \
+    	-device ahci,id=ahci0 \
+    	-device ide-hd,drive=sata_disk,bus=ahci0.0 \
+		$(QEMUFLAGS)
+
 run-debug: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 	qemu-system-x86_64 \
 		-M q35 \
