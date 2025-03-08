@@ -7,7 +7,9 @@
 #include <syncos/keyboard.h>
 #include <syncos/mouse.h>
 #include <syncos/pmm.h>
-#include <syncos/vmm.h>  // Include the VMM header
+#include <syncos/vmm.h>
+#include <core/drivers/nvme.h>
+#include <core/drivers/pci.h>
 #include <kstd/stdio.h>
 #include <kstd/string.h>
 #include <syncos/serial.h>
@@ -61,6 +63,14 @@ void kmain(void) {
         vmm_init();
     } else {
         printf("ERROR: No memory map response from bootloader\n");
+    }
+
+    pci_init();
+
+    if (nvme_init()) {
+        printf("NVMe driver initialized successfully\n");
+    } else {
+        printf("NVMe driver initialization failed\n");
     }
 
     printf("\nSystem initialization complete.\n");

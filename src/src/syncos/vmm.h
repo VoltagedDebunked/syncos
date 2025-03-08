@@ -76,6 +76,12 @@ void* vmm_allocate(size_t size, uint64_t flags);
 // Free virtual memory
 void vmm_free(void* addr, size_t size);
 
+// Map physical memory to virtual address space
+void* vmm_map_physical(uintptr_t phys_addr, size_t size, uint64_t flags);
+
+// Unmap previously mapped physical memory
+void vmm_unmap_physical(void* virt_addr, size_t size);
+
 // Handle page fault
 bool vmm_handle_page_fault(uintptr_t fault_addr, uint32_t error_code);
 

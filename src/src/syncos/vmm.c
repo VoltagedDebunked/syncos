@@ -697,7 +697,6 @@ void vmm_free(void* addr, size_t size) {
     }
     
     // Find and free the memory area
-    // Find and free the memory area
     memory_area_t* areas;
     int count;
     
@@ -718,6 +717,54 @@ void vmm_free(void* addr, size_t size) {
     
     // Update statistics
     vmm_stats.pages_freed += page_count;
+}
+
+// Map physical memory to virtual address space
+void* vmm_map_physical(uintptr_t phys_addr, size_t size, uint64_t flags) {
+    // Round to page size
+    size = (size + PAGE_SIZE_4K - 1) & ~(PAGE_SIZE_4K - 1);
+    
+    // For high physical addresses (above 4GB), we need special handling
+    void* virt_addr;
+    
+    // Choose appropriate virtual address range based on physical address
+    if (phys_addr >= 0x100000000ULL) {
+        // For addresses above 4GB, use a dedicated high mapping area
+        // Starting at -8GB from the end of virtual address space
+        virt_addr = (void*)((0xFFFFFFFF00000000ULL - 0x200000000ULL) + 
+                           (phys_addr & 0xFFFFFFFFULL));
+    } else {
+        // Standard higher half mapping for normal physical addresses
+        virt_addr = (void*)(phys_addr + KERNEL_VIRTUAL_BASE);
+    }
+    
+    // Map each page
+    for (size_t offset = 0; offset < size; offset += PAGE_SIZE_4K) {
+        if (!vmm_map_page((uintptr_t)virt_addr + offset, phys_addr + offset, flags)) {
+            // Clean up on failure
+            for (size_t i = 0; i < offset; i += PAGE_SIZE_4K) {
+                vmm_unmap_page((uintptr_t)virt_addr + i);
+            }
+            return NULL;
+        }
+    }
+    
+    return virt_addr;
+}
+
+// Unmap previously mapped physical memory
+void vmm_unmap_physical(void* virt_addr, size_t size) {
+    if (!virt_addr) {
+        return;
+    }
+    
+    // Round to page size
+    size = (size + PAGE_SIZE_4K - 1) & ~(PAGE_SIZE_4K - 1);
+    
+    // Unmap each page
+    for (size_t offset = 0; offset < size; offset += PAGE_SIZE_4K) {
+        vmm_unmap_page((uintptr_t)virt_addr + offset);
+    }
 }
 
 // Create a new address space

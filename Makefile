@@ -28,6 +28,9 @@ run-x86_64: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 		-M q35 \
 		-drive if=pflash,unit=0,format=raw,file=ovmf/ovmf-code-x86_64.fd,readonly=on \
 		-cdrom $(IMAGE_NAME).iso \
+		-device nvme,id=nvme0,serial=nvme-1 \
+		-drive file=img/nvme.img,if=none,id=nvmedisk0,format=raw \
+		-device nvme-ns,drive=nvmedisk0,nsid=1 \
 		$(QEMUFLAGS)
 
 run-debug: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
@@ -35,6 +38,9 @@ run-debug: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 		-M q35 \
 		-drive if=pflash,unit=0,format=raw,file=ovmf/ovmf-code-x86_64.fd,readonly=on \
 		-cdrom $(IMAGE_NAME).iso \
+		-device nvme,id=nvme0,serial=nvme-1 \
+		-drive file=img/nvme.img,if=none,id=nvmedisk0,format=raw \
+		-device nvme-ns,drive=nvmedisk0,nsid=1 \
 		-s -S \
 		$(QEMUFLAGS)
 
@@ -44,6 +50,9 @@ run-hdd-x86_64: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).hdd
 		-M q35 \
 		-drive if=pflash,unit=0,format=raw,file=ovmf/ovmf-code-x86_64.fd,readonly=on \
 		-hda $(IMAGE_NAME).hdd \
+		-device nvme,id=nvme0,serial=nvme-1 \
+		-drive file=img/nvme.img,if=none,id=nvmedisk0,format=raw \
+		-device nvme-ns,drive=nvmedisk0,nsid=1 \
 		$(QEMUFLAGS)
 
 .PHONY: run-bios
@@ -52,6 +61,9 @@ run-bios: $(IMAGE_NAME).iso
 		-M q35 \
 		-cdrom $(IMAGE_NAME).iso \
 		-boot d \
+		-device nvme,id=nvme0,serial=nvme-1 \
+		-drive file=img/nvme.img,if=none,id=nvmedisk0,format=raw \
+		-device nvme-ns,drive=nvmedisk0,nsid=1 \
 		$(QEMUFLAGS)
 
 .PHONY: run-hdd-bios
@@ -59,6 +71,9 @@ run-hdd-bios: $(IMAGE_NAME).hdd
 	qemu-system-x86_64 \
 		-M q35 \
 		-hda $(IMAGE_NAME).hdd \
+		-device nvme,id=nvme0,serial=nvme-1 \
+		-drive file=img/nvme.img,if=none,id=nvmedisk0,format=raw \
+		-device nvme-ns,drive=nvmedisk0,nsid=1 \
 		$(QEMUFLAGS)
 
 ovmf/ovmf-code-x86_64.fd:
