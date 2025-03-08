@@ -17,6 +17,7 @@
 #include <kstd/asm.h>
 #include <syncos/fs/ext4.h>
 #include <syncos/elf.h>
+#include <syncos/process.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
@@ -35,6 +36,35 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0
 };
+
+bool kernel_init_processes(void) {
+    // First initialize the process subsystem
+    if (!process_init()) {
+        printf("Failed to initialize process manager\n");
+        return false;
+    }
+
+    // Initialize the process scheduler
+    if (!process_scheduler_init()) {
+        printf("Failed to initialize process scheduler\n");
+        return false;
+    }
+
+    // Initialize process architecture-specific features
+    if (!process_arch_init()) {
+        printf("Failed to initialize process architecture\n");
+        return false;
+    }
+
+    // Register the current kernel thread as the idle process
+    if (!process_register_kernel_idle()) {
+        printf("Failed to register kernel idle process\n");
+        return false;
+    }
+
+    printf("Process subsystem initialized successfully\n");
+    return true;
+}
 
 // Kernel main function
 void kmain(void) {
@@ -115,6 +145,8 @@ void kmain(void) {
     }
 
     ext4_init();
+    
+    kernel_init_processes();
 
     printf("\n==============================================\n");
     printf("       SyncOS - Finished Initialization       \n");
