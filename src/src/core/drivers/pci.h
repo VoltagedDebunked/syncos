@@ -93,6 +93,8 @@ typedef struct {
     uint8_t interrupt_pin;
 } pci_device_t;
 
+extern pci_device_t pci_devices[];
+
 // PCI function prototypes
 void pci_init(void);
 uint8_t pci_read_config_byte(pci_device_t *device, uint8_t offset);

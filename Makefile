@@ -31,6 +31,8 @@ run-x86_64: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 		-device nvme,id=nvme0,serial=nvme-1 \
 		-drive file=img/nvme.qcow2,if=none,id=nvmedisk0,format=raw \
 		-device nvme-ns,drive=nvmedisk0,nsid=1 \
+	  	-device e1000,netdev=net0,mac=52:54:00:12:34:56 \
+  		-netdev user,id=net0 \
 		$(QEMUFLAGS)
 
 run-sata: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
@@ -41,6 +43,8 @@ run-sata: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 	    -drive file=img/sata.qcow2,if=none,id=sata_disk \
     	-device ahci,id=ahci0 \
     	-device ide-hd,drive=sata_disk,bus=ahci0.0 \
+	  	-device e1000,netdev=net0,mac=52:54:00:12:34:56 \
+  		-netdev user,id=net0 \
 		$(QEMUFLAGS)
 
 run-debug: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
@@ -51,6 +55,8 @@ run-debug: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).iso
 		-device nvme,id=nvme0,serial=nvme-1 \
 		-drive file=img/nvme.qcow2,if=none,id=nvmedisk0,format=raw \
 		-device nvme-ns,drive=nvmedisk0,nsid=1 \
+	  	-device e1000,netdev=net0,mac=52:54:00:12:34:56 \
+  		-netdev user,id=net0 \
 		-s -S \
 		$(QEMUFLAGS)
 
@@ -63,6 +69,8 @@ run-hdd-x86_64: ovmf/ovmf-code-x86_64.fd $(IMAGE_NAME).hdd
 		-device nvme,id=nvme0,serial=nvme-1 \
 		-drive file=img/nvme.qcow2,if=none,id=nvmedisk0,format=raw \
 		-device nvme-ns,drive=nvmedisk0,nsid=1 \
+	  	-device e1000,netdev=net0,mac=52:54:00:12:34:56 \
+  		-netdev user,id=net0 \
 		$(QEMUFLAGS)
 
 .PHONY: run-bios
@@ -74,6 +82,8 @@ run-bios: $(IMAGE_NAME).iso
 		-device nvme,id=nvme0,serial=nvme-1 \
 		-drive file=img/nvme.qcow2,if=none,id=nvmedisk0,format=raw \
 		-device nvme-ns,drive=nvmedisk0,nsid=1 \
+	  	-device e1000,netdev=net0,mac=52:54:00:12:34:56 \
+  		-netdev user,id=net0 \
 		$(QEMUFLAGS)
 
 .PHONY: run-hdd-bios
@@ -84,6 +94,8 @@ run-hdd-bios: $(IMAGE_NAME).hdd
 		-device nvme,id=nvme0,serial=nvme-1 \
 		-drive file=img/nvme.qcow2,if=none,id=nvmedisk0,format=raw \
 		-device nvme-ns,drive=nvmedisk0,nsid=1 \
+	  	-device e1000,netdev=net0,mac=52:54:00:12:34:56 \
+  		-netdev user,id=net0 \
 		$(QEMUFLAGS)
 
 ovmf/ovmf-code-x86_64.fd:

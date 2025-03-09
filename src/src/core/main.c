@@ -18,6 +18,8 @@
 #include <syncos/fs/ext4.h>
 #include <syncos/elf.h>
 #include <syncos/process.h>
+#include <core/drivers/net/e1000.h>
+#include <syncos/net/net.h>
 
 // Limine requests
 __attribute__((used, section(".limine_requests")))
@@ -64,6 +66,55 @@ bool kernel_init_processes(void) {
 
     printf("Process subsystem initialized successfully\n");
     return true;
+}
+
+bool network_init(void) {
+    printf("\n=== Network Initialization ===\n");
+    
+    // Find network devices through PCI
+    bool network_available = false;
+    
+    // Find Intel E1000 network cards - use the PCI find functions
+    uint32_t count = 0;
+    pci_device_t* network_devices = pci_find_devices(0x02, 0x00, &count); // Network controller, Ethernet
+    
+    if (network_devices != NULL && count > 0) {
+        for (uint32_t i = 0; i < count; i++) {
+            pci_device_t* dev = &network_devices[i];
+            
+            // Check if this is an Intel E1000 network card
+            if (dev->vendor_id == 0x8086 && 
+                (dev->device_id == 0x100E || // 82540EM
+                 dev->device_id == 0x100F || // 82545EM
+                 dev->device_id == 0x10D3)) { // 82574L
+                
+                printf("Found Intel E1000 network card at bus %d, device %d, function %d\n",
+                      dev->bus, dev->device, dev->function);
+                
+                // Enable the PCI device
+                pci_enable_device(dev);
+                
+                // Get the I/O base address from BAR0
+                uint16_t iobase = (uint16_t)pci_get_bar_address(dev, 0);
+                
+                e1000_init(i, iobase);
+                
+                // Initialize the networking stack
+                net_init();
+                
+                network_available = true;
+                break;
+            }
+        }
+    }
+    
+    if (network_available) {
+        printf("Network subsystem initialized successfully\n");
+    } else {
+        printf("No compatible network devices detected\n");
+    }
+    
+    return network_available;
 }
 
 // Kernel main function
@@ -148,6 +199,12 @@ void kmain(void) {
     
     kernel_init_processes();
 
+    bool network_available = network_init();
+    if (!network_available) {
+        printf("WARNING: No network devices were detected!\n");
+        printf("The system will run without network connectivity.\n");
+    }
+    
     printf("\n==============================================\n");
     printf("       SyncOS - Finished Initialization       \n");
     printf("==============================================\n\n");

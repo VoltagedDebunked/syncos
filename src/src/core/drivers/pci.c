@@ -13,8 +13,8 @@
 #define PCI_CONFIG_DATA    0xCFC
 
 // Static list of detected PCI devices
-static pci_device_t pci_devices[MAX_PCI_DEVICES];
-static uint32_t pci_device_count = 0;
+pci_device_t pci_devices[MAX_PCI_DEVICES];
+uint32_t pci_device_count = 0;
 
 // Generate PCI configuration address value
 static uint32_t pci_make_address(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset) {
